@@ -16,7 +16,11 @@ const {
   updateContentImageLinks,
   deleteContent,
 } = require('./handlers/content');
-const { contactUs } = require('./handlers/contactUs');
+const {
+  contactUs,
+  getContactUsMessages,
+  deleteContactUsMessage,
+} = require('./handlers/contactUs');
 
 const { login } = require('./handlers/users');
 
@@ -25,13 +29,17 @@ app.get('/content', getContents);
 app.get('/2d3d', get2d3d);
 app.get('/social-media', getSocialMedia);
 app.get('/videos', getVideos);
-app.post('/contact', contactUs);
 app.post('/content', FBAuth, postContent);
 app.post(
   '/image/:contentId/:imageType/:imageFileName/:imageExtension/:index',
   FBAuth,
   updateContentImageLinks,
 );
+
+app.post('/contact', contactUs);
+app.get('/contact', FBAuth, getContactUsMessages);
+app.delete('/contact/:contactId', FBAuth, deleteContactUsMessage);
+
 // app.post('/image/:contentId/mainImage/:imageFileName', FBAuth, postMainImage);
 // app.post(
 //   '/image/:contentId/imageList/:imageFileName/:index',

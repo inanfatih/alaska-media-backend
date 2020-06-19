@@ -45,3 +45,60 @@ exports.contactUs = (req, res) => {
       return res.status(500).json({ error: err });
     });
 };
+
+exports.getContactUsMessages = (req, res) => {
+  db.collection('contactUsMessages')
+    .orderBy('createdAt', 'desc')
+    .get()
+    .then((data) => {
+      let contact = [];
+      data.forEach((doc) => {
+        contact.push({
+          messageId: doc.id,
+          email: doc.data().email,
+          message: doc.data().message,
+          name: doc.data().name,
+          phone: doc.data().phone,
+          createdAt: doc.data().createdAt,
+        });
+      });
+      return res.json(contact);
+    })
+    .catch((err) => console.error(err));
+};
+
+exports.deleteContactUsMessage = (req, res) => {
+  const document = db.doc(`/contactUsMessages/${req.params.contactId}`);
+  document
+    .get()
+    .then((doc) => {
+      if (!doc.exists) {
+        return res.status(200).json({ message: 'Message not found' });
+      }
+      return document.delete();
+    })
+    .then(() => {
+      db.collection('contactUsMessages')
+        .orderBy('createdAt', 'desc')
+        .get()
+        .then((data) => {
+          let contact = [];
+          data.forEach((doc) => {
+            contact.push({
+              messageId: doc.id,
+              email: doc.data().email,
+              message: doc.data().message,
+              name: doc.data().name,
+              phone: doc.data().phone,
+              createdAt: doc.data().createdAt,
+            });
+          });
+          return res.json(contact);
+        })
+        .catch((err) => console.error(err));
+    })
+    .catch((err) => {
+      console.log(err);
+      return res.status(500).json({ error: err.code });
+    });
+};
