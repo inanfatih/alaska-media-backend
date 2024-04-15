@@ -1,1 +1,1 @@
-# alaska-media-client
+# dream-pictures-ca-client
